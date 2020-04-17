@@ -106,45 +106,60 @@
                 {% if user.level == 9%}
                   <td>
                     <a href="/dashboard/edit_user/{{profile.id}}">edit</a> | 
-                    <a href="#">remove</a>
+                    <a href="" data-toggle="modal" data-target="#remove{{profile.id}}">remove</a>
+
+                      <!-- Modal -->
+                      <div class="modal fade" id="remove{{profile.id}}" tabindex="-1" role="dialog" aria-labelledby="removeModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="removeModalLabel">Remove {{profile.first_name}} {{profile.last_name}}?</h5>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                            </div>
+                            <div class="modal-body">
+                              <p>Deleting this account will remove all it's associated posts, messages, and comments. Are you sure?</p>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                              <a href="/dashboard/delete/{{profile.id}}" class="btn btn-danger">Delete</a>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      
                   </td>
                 {% endif %}
                 </tr>
               {% endfor %}
               </tbody>
-  
             </table>
-
           </div>
         </div>
-
       </div>
 
-        <!-- Jumbotron -->
-        <!-- <div class="jumbotron">
-          <h1 class="display-4">User Dashboard</h1>
-          <p class="lead">You are in the matrix</p> -->
-          <!-- <hr class="my-4"> -->
-          <!-- <p>Major features include login and registration, account administration, and a message board.</p> -->
-          <!-- <p><a class="btn btn-lg btn-primary" href="/signin" role="button">Get Started</a></p> -->
-        <!-- </div> -->
+      <!-- Modal -->
+      <div class="modal fade" id="remove" tabindex="-1" role="dialog" aria-labelledby="removeModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="removeModalLabel">Remove this user?</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              {{profile.first_name}}
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+              <button type="button" class="btn btn-danger ">Delete</button>
+            </div>
+          </div>
+        </div>
+      </div>
 
-        <!-- Content -->
-        <!-- <div class="row">
-          <div class="col-4">
-            <h3>Manage Users</h3>
-            <p>Using this application you'll learn how to add, remove, and edit users for the application.</p>
-          </div>
-          <div class="col-4">
-            <h3>Leave messages</h3>
-            <p>Users will be able to leave messages for other users using this application.</p>
-          </div>
-          <div class="col-4">
-            <h3>Edit User Information</h3>
-            <p>Users are able to edit their account information. Administrators can edit the profiles of other users.</p>
-          </div>
-        </div> -->
-      <!-- </div> -->
     </div>
 
   

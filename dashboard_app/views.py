@@ -124,3 +124,13 @@ def process_profile_update(request, id):
     else:
         return edit_user(request, id) # edit_user() returned if admin is editing another user's profile
 
+def process_profile_deletion(request, id):
+    # restrict access to this url to none-administrators
+    if User.objects.filter(id=int(request.session["user_id"]))[0].level != 9:
+        return redirect("/dashboard")
+    # delete user account
+    user = User.objects.get(id=id)
+    user.delete()
+
+    return redirect("/dashboard")
+    
