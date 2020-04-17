@@ -14,15 +14,65 @@
     <!-- Custom CSS stylesheet-->
     <!-- <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}"> -->
 
-    <title>Project Name</title>
+    <title>Welcome to User Dashboard</title>
+
+    <style>
+      .jumbotron {
+        margin-top: 10px;
+      }
+    </style>
 
   </head>
-  
+
   <body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand navbar-light bg-light">
+      <a class="navbar-brand" href="#">User Dashboard</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <a class="navbar-nav mr-auto nav-link" href="#">Home</a>
+      {% if request.session.user_id == None %}
+        <a class="navbar-nav mr-sm-0 nav-link" href="/signin">Signin</a>
+      {% else %}
+        <a class="navbar-nav mr-sm-0 nav-link" href="/logoff">Logoff</a>
+      {% endif %}
+      </div>
+    </nav>
+
+    <!-- Container -->
     <div class="container">
-        <h1>Hello project!</h1>
+
+        <!-- Jumbotron -->
+        <div class="jumbotron">
+          <h1 class="display-4">User Dashboard</h1>
+          <p class="lead">This full-stack application is built with Django 2.2. The following technologies were used in the development of this app: Python3, Django 2.2, Bootstap 4, HTML, CSS, and JavaScript</p>
+          <hr class="my-4">
+          <p>Major features include login and registration, account administration, and a message board.</p>
+          <p><a class="btn btn-lg btn-primary" href="/signin" role="button">Get Started</a></p>
+        </div>
+
+        <!-- Content -->
+        <div class="row">
+          <div class="col-4">
+            <h3>Manage Users</h3>
+            <p>Using this application you'll learn how to add, remove, and edit users for the application.</p>
+          </div>
+          <div class="col-4">
+            <h3>Leave messages</h3>
+            <p>Users will be able to leave messages for other users using this application.</p>
+          </div>
+          <div class="col-4">
+            <h3>Edit User Information</h3>
+            <p>Users are able to edit their account information. Administrators can edit the profiles of other users.</p>
+          </div>
+        </div>
+      <!-- </div> -->
     </div>
 
+  
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
 
