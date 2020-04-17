@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge,chrome=1">
+
+    {% load static %}
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" type="text/css" href="{% static 'bootstrap.css' %}">
+
+    <!-- Custom CSS stylesheet-->
+    <!-- <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}"> -->
+
+    <style>
+      .top_row {
+        margin-top: 15px;
+      }
+      .second_row {
+        margin-top: 25px;
+      }
+      textarea {
+        min-height: 120px;
+        max-height: 200px;
+        overflow: auto;
+      }
+      .message_content {
+        max-height: 200px;
+        overflow: auto;
+        border: 1px solid grey;
+        border-radius: 5px;
+        padding: 5px;
+      }
+      .comment_content {
+        max-height: 150px;
+        overflow: auto;
+        border: 1px solid grey;
+        border-radius: 5px;
+        padding: 5px;
+      }
+      .comment_textarea {
+        min-height: 50px;
+        max-height: 100px;
+      }
+      .comment_button {
+        margin-top: 10px;
+      }
+      button {
+        width: 80px;
+      }
+
+    </style>
+
+    <title>Messageboard</title>
+
+  </head>
+  
+  <body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand navbar-light bg-light">
+      <a class="navbar-brand" href="/">User Dashboard</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <a class="navbar-nav mr-sm-0 nav-link" href="/dashboard">Dashboard</a>
+        <a class="navbar-nav mr-auto nav-link" href="/dashboard/profile">Profile</a>
+      {% if request.session.user_id == None %}
+        <a class="navbar-nav mr-sm-0 nav-link" href="/signin">Signin</a>
+      {% else %}
+        <a class="navbar-nav mr-sm-0 nav-link" href="/logoff">Logoff</a>
+      {% endif %}
+      </div>
+    </nav>
+
+    <div class="container">
+      <div class="row top_row">
+        <div class="col-12">
+          <h3>{{profile.first_name}} {{profile.last_name}}</h3>
+        </div>
+        <div class="col-12">
+
+          <div class="row">
+            <div class="col-4 col-md-3 col-lg-2">Registered at:</div>
+            <div class="col-8 col-md-9 col-lg-10">{{profile.created_at}}</div>
+          </div>
+
+          <div class="row">
+            <div class="col-4 col-md-3 col-lg-2">User ID:</div>
+            <div class="col-8 col-md-9 col-lg-10">{{profile.id}}</div>
+          </div>
+
+          <div class="row">
+            <div class="col-4 col-md-3 col-lg-2">Email Address:</div>
+            <div class="col-8 col-md-9 col-lg-10">{{profile.email}}</div>
+          </div>
+
+          <div class="row">
+            <div class="col-4 col-md-3 col-lg-2">Description:</div>
+            <div class="col-8 col-md-9 col-lg-10">{{profile.description}}</div>
+          </div>
+
+        </div>
+      </div>
+    
+      <!-- Post a Message / Leave a message for {{profile.name}} header -->
+      <div class="row second_row">
+        <div class="col-12">
+        {% if profile.id == user.id%}
+          <h5>Post a message</h5>
+        {% else %}
+          <h5>Leave a message for {{profile.first_name}} </h5>
+        {% endif %}
+        </div>
+      </div>
+
+      <!-- Post a Message / Leave a message for {{profile.name}} content -->
+      <div class="row">
+        <div class="col-12">
+          <form action="/message_board/{{profile.id}}/post_message" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+              <textarea class="form-control" name="message"></textarea>
+            </div>
+            <div class="form-group text-right">
+              <button class="btn btn-success btn-sm">Post</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+    {% for message in messages_received.all %}
+      <!-- Message header -->
+      <div class="row">
+        <div class="col-6">
+          <p>{{ message.author.first_name }} {{ message.author.last_name }} wrote:</p>
+        </div>
+        <div class="col-6 text-right">
+          <p>{{message.created_at}}</p>
+        </div>
+      </div>
+
+      <!-- Message Content -->
+      <div class="row">
+        <div class="col-12">
+          <p class="message_content">{{ message.content }}</p>
+        </div>
+      </div>
+
+      {% for comment in message.comments.all %}
+      <!-- comment header -->
+      <div class="row">
+        <div class="col-5 offset-2">
+          <p>{{comment.author.first_name}} wrote</p>
+        </div>
+        <div class="col-5 text-right">
+          <p>{{comment.created_at}}</p>
+        </div>
+      </div>
+      <!-- comment content -->
+      <div class="row">
+        <div class="col-10 offset-2">
+          <p class="comment_content">{{comment.content}}</p>
+        </div>
+      </div>
+      {% endfor %}
+      <!-- Leave a comment -->
+      <div class="row">
+        <div class="col-10 offset-2">
+          <p>Leave a comment:</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-10 offset-2">
+          <form action="/message_board/{{profile.id}}/{{message.id}}/comment" method="post">
+            {% csrf_token %}
+            <textarea class="form-control comment_textarea" name="comment"></textarea>
+            <div class="form-group text-right">
+              <button class="btn btn-success btn-sm comment_button">Post</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    {% endfor %}
+
+
+    </div>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+
+    <!-- Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+      
+    <!-- bootstrap.js-->
+    <script type="text/javascript" src="{% static 'bootstrap.js' %}"></script>
+
+    <!-- Custom JavaScript -->
+    <!-- <script type="text/javascript" src="script.js"></script> -->
+
+  </body>
+</html>
