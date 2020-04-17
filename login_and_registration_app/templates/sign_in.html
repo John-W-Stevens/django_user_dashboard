@@ -27,15 +27,16 @@
 
       <!-- Navbar -->
       <nav class="navbar navbar-expand navbar-light bg-light">
-        <a class="navbar-brand" href="#">User Dashboard</a>
+        <a class="navbar-brand" href="/">User Dashboard</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <a class="navbar-nav mr-auto nav-link" href="/">Home</a>
         {% if request.session.user_id == None %}
+          <a class="navbar-nav mr-auto nav-link" href="/">Home</a>
           <a class="navbar-nav mr-sm-0 nav-link" href="/signin">Signin</a>
         {% else %}
+          <a class="navbar-nav mr-auto nav-link" href="/dashboard">Home</a>
           <a class="navbar-nav mr-sm-0 nav-link" href="/logoff">Logoff</a>
         {% endif %}
         </div>

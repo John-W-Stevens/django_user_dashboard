@@ -26,7 +26,7 @@ def process_login(request):
     # login user
     else:
         request.session["user_id"] = models.User.objects.filter(email=request.POST["email"])[0].id
-        return redirect("/")
+        return redirect("/dashboard")
 
 def register(request, errors=None):
     context = {"errors": errors}
@@ -50,13 +50,16 @@ def process_registration(request):
     
     # create new user
     new_user = models.User.objects.create(first_name=first_name,last_name=last_name,email=email,password=pw_hash)
+    
+    if len(models.User.objects.all()) == 1:
+        new_user.level = 9 # make the first user an administrator    
     new_user.save()
 
     # log the user in with session
     request.session["user_id"] = new_user.id
 
     # direct the user to the the dashboard
-    return redirect("/")
+    return redirect("/dashboard")
 
 def logoff(request):
     del request.session["user_id"]
