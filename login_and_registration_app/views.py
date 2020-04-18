@@ -2,6 +2,9 @@ from django.shortcuts import render, redirect
 from . import models
 import bcrypt
 
+def logged_user(request):
+    return models.User.objects.filter(id=request.session["user_id"])[0]
+
 def initialize_session(request):
     try:
         request.session["user_id"]
@@ -14,11 +17,17 @@ def index(request):
         context = {}
     else:    
         context = {
-            "user": models.User.objects.filter(id=request.session["user_id"])[0],
+            "user": logged_user(request),
         }
     return render(request, "index.html", context)
 
-def signin(request, errors=None):
+def sign_in(request):
+
+    try:
+        errors = request.session["errors"]
+    except KeyError:
+        errors = None
+
     if request.session["user_id"] == None:
         context = {
             "user": "none",
@@ -26,9 +35,11 @@ def signin(request, errors=None):
         }
     else:
         context = {
-            "user": models.User.objects.filter(id=request.session["user_id"])[0],
+            "user": logged_user(request),
             "errors": errors,
         }
+    request.session["errors"] = None
+
     return render(request, "sign_in.html", context)
 
 def process_login(request):
@@ -36,13 +47,20 @@ def process_login(request):
     # handle errors
     errors = models.User.objects.login_validations(request.POST)    
     if len(errors) > 0:
-        return signin(request, errors=errors)
+        request.session["errors"] = errors
+        return redirect("/signin")
     # login user
     else:
         request.session["user_id"] = models.User.objects.filter(email=request.POST["email"])[0].id
         return redirect("/dashboard")
 
-def register(request, errors=None):
+def register(request):
+
+    try:
+        errors = request.session["errors"]
+    except KeyError:
+        errors = None
+
     if request.session["user_id"] == None:
         context = {
             "user": "none",
@@ -50,16 +68,19 @@ def register(request, errors=None):
         }
     else:
         context = {
-            "user": models.User.objects.filter(id=request.session["user_id"])[0],
+            "user": logged_user(request),
             "errors": errors,
         }
+    request.session["errors"] = None
+
     return render(request, "register.html", context)
 
 def process_registration(request):
 
     errors = models.User.objects.registration_validations(request.POST)
     if len(errors) > 0:
-        return register(request, errors=errors)
+        request.session["errors"] = errors
+        return redirect("/register")
 
     first_name = request.POST["first_name"]
     last_name = request.POST["last_name"]

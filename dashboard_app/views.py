@@ -2,16 +2,19 @@ from django.shortcuts import render, redirect
 from login_and_registration_app.models import User
 import bcrypt
 
+def logged_user(request):
+    return User.objects.filter(id=request.session["user_id"])[0]
+
 # Create your views here.
 def dashboard(request):
     context = {
-        "user": User.objects.filter(id=request.session["user_id"])[0],
+        "user": logged_user(request),
         "users": User.objects.all(),
     }
     return render(request, "dashboard.html", context)
 
 def add_user(request, errors=None):
-    user = User.objects.filter(id=request.session["user_id"])[0]
+    user = logged_user(request)
     if user.level == 9:
         context = {
             "errors": errors,
@@ -49,7 +52,7 @@ def process_new_user(request):
 
 def load_profile(request, errors=None):
     # current user
-    user = User.objects.filter(id=request.session["user_id"])[0]
+    user = logged_user(request)
 
     context = {
         "user": user,
@@ -60,7 +63,7 @@ def load_profile(request, errors=None):
     return render(request, "profile.html", context)
 
 def edit_user(request, id, errors=None):
-    user = User.objects.filter(id=request.session["user_id"])[0]
+    user = logged_user(request)
 
     if user.level != 9: # prevent access to this url for non-admins
         return redirect("/dashboard")
@@ -70,7 +73,7 @@ def edit_user(request, id, errors=None):
         "profile": User.objects.filter(id=id)[0],
         "errors": errors,
         }
-    print(errors)
+
     return render(request, "profile.html", context)
 
 def process_profile_update(request, id):
@@ -128,10 +131,9 @@ def process_profile_update(request, id):
         return edit_user(request, id) # edit_user() returned if admin is editing another user's profile
 
 def process_profile_deletion(request, id):
-    # restrict access to this url to none-administrators
-    if User.objects.filter(id=request.session["user_id"])[0].level != 9:
+    # restrict access to this url for none-administrators
+    if logged_user(request).level != 9:
         return redirect("/dashboard")
-    # delete user account
     user = User.objects.get(id=id)
     user.delete()
 
