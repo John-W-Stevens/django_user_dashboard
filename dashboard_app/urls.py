@@ -3,10 +3,9 @@ from . import views
 
 urlpatterns = [
     path("", views.dashboard),
-    path("/add_user", views.add_user),
+    path("/add_user", views.load_add_user_page),
     path("/process_new_user", views.process_new_user),
-    path("/edit_user/<int:id>", views.edit_user),
-    path("/profile", views.load_profile),
-    path("/update/<int:id>", views.process_profile_update),
-    path("/delete/<int:id>", views.process_profile_deletion),
+    path("/edit_profile/<int:profile_id>", views.load_edit_profile_page),
+    path("/update_profile/<int:profile_id>", views.process_profile_update),
+    path("/delete_profile/<int:id>", views.process_profile_deletion),
 ]

@@ -99,9 +99,9 @@
         <a class="navbar-nav mr-sm-0 nav-link" href="/dashboard">Dashboard</a>
         <a class="navbar-nav mr-auto nav-link" href="/message_board/{{user.id}}">Wall</a>
       {% if user.level == 9%}
-        <a class="navbar-nav mr-sm-0 nav-link" href="/dashboard/profile">{{user.first_name}} {{user.last_name}} (admin)</a>
+        <a class="navbar-nav mr-sm-0 nav-link" href="/dashboard/edit_profile/{{user.id}}">{{user.first_name}} {{user.last_name}} (admin)</a>
       {% else %}
-        <a class="navbar-nav mr-sm-0 nav-link" href="/dashboard/profile">{{user.first_name}} {{user.last_name}}</a>
+        <a class="navbar-nav mr-sm-0 nav-link" href="/dashboard/edit_profile/{{user.id}}">{{user.first_name}} {{user.last_name}}</a>
       {% endif %}
         <a class="navbar-nav mr-sm-0 nav-link" href="/logoff">Logoff</a>
       {% endif %}

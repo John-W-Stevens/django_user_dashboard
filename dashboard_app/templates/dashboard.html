@@ -47,9 +47,9 @@
         <a class="navbar-nav mr-sm-0 nav-link" href="/signin">Signin</a>
       {% else %}
       {% if user.level == 9%}
-      <a class="navbar-nav mr-sm-0 nav-link" href="/dashboard/profile">{{user.first_name}} {{user.last_name}} (admin)</a>
+      <a class="navbar-nav mr-sm-0 nav-link" href="/dashboard/edit_profile/{{user.id}}">{{user.first_name}} {{user.last_name}} (admin)</a>
       {% else %}
-      <a class="navbar-nav mr-sm-0 nav-link" href="/dashboard/profile">{{user.first_name}} {{user.last_name}}</a>
+      <a class="navbar-nav mr-sm-0 nav-link" href="/dashboard/edit_profile/{{user.id}}">{{user.first_name}} {{user.last_name}}</a>
       {% endif %}
       <a class="navbar-nav mr-sm-0 nav-link" href="/logoff">Logoff</a>
       {% endif %}
@@ -111,7 +111,7 @@
                 {% endif %}
                 {% if user.level == 9%}
                   <td>
-                    <a href="/dashboard/edit_user/{{profile.id}}">edit</a> | 
+                    <a href="/dashboard/edit_profile/{{profile.id}}">edit</a> |
                     <a href="" data-toggle="modal" data-target="#remove{{profile.id}}">remove</a>
 
                       <!-- Modal -->
@@ -129,7 +129,7 @@
                             </div>
                             <div class="modal-footer">
                               <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
-                              <a href="/dashboard/delete/{{profile.id}}" class="btn btn-danger">Delete</a>
+                              <a href="/dashboard/delete_profile/{{profile.id}}" class="btn btn-danger">Delete</a>
                             </div>
                           </div>
                         </div>

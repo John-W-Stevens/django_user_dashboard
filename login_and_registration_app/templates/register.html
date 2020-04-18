@@ -17,6 +17,10 @@
       .content {
         margin-top: 30px;
       }
+      .error_message {
+        color: red;
+      }
+
     </style>
 
     <title>Register</title>
@@ -39,9 +43,9 @@
         <a class="navbar-nav mr-sm-0 nav-link" href="/dashboard">Dashboard</a>
         <a class="navbar-nav mr-auto nav-link" href="/message_board/{{user.id}}">Wall</a>
       {% if user.level == 9%}
-        <a class="navbar-nav mr-sm-0 nav-link" href="/dashboard/profile">{{user.first_name}} {{user.last_name}} (admin)</a>
+        <a class="navbar-nav mr-sm-0 nav-link" href="/dashboard/edit_profile/{{user.id}}">{{user.first_name}} {{user.last_name}} (admin)</a>
       {% else %}
-        <a class="navbar-nav mr-sm-0 nav-link" href="/dashboard/profile">{{user.first_name}} {{user.last_name}}</a>
+        <a class="navbar-nav mr-sm-0 nav-link" href="/dashboard/edit_profile/{{user.id}}">{{user.first_name}} {{user.last_name}}</a>
       {% endif %}
         <a class="navbar-nav mr-sm-0 nav-link" href="/logoff">Logoff</a>
       {% endif %}
@@ -57,28 +61,28 @@
               <div class="form-group">
                 <label>Email Address:</label>
                 {% if errors.email %}
-                &nbsp<small>{{ errors.email }}</small>
+                &nbsp<small class="error_message">{{ errors.email }}</small>
                 {% endif %}
                 <input type="text" class="form-control" name="email">
               </div>
               <div class="form-group">
                 <label>First Name:</label>
                 {% if errors.first_name %}
-                &nbsp<small>{{ errors.first_name }}</small>
+                &nbsp<small class="error_message">{{ errors.first_name }}</small>
                 {% endif %}
                 <input type="text" class="form-control" name="first_name">
               </div>
               <div class="form-group">
                 <label>Last Name:</label>
                 {% if errors.email %}
-                &nbsp<small>{{ errors.last_name }}</small>
+                &nbsp<small class="error_message">{{ errors.last_name }}</small>
                 {% endif %}
                 <input type="text" class="form-control" name="last_name">
               </div>
               <div class="form-group">
                 <label>Password:</label>
                 {% if errors.password %}
-                <small>{{ errors.password }}</small>
+                <small class="error_message">{{ errors.password }}</small>
                 {% else %}
                 <small>Must be 8 characters long</small>
                 {% endif %}
@@ -87,7 +91,7 @@
               <div class="form-group">
                 <label>Confirm Password:</label>
                 {% if errors.pw_confirm %}
-                &nbsp<small>{{ errors.pw_confirm }}</small>
+                &nbsp<small class="error_message">{{ errors.pw_confirm }}</small>
                 {% endif %}
                 <input type="text" class="form-control" name="pw_confirm">
               </div>
