@@ -10,11 +10,25 @@ def initialize_session(request):
 
 def index(request):
     initialize_session(request)
-    context = {}
+    if request.session["user_id"] == None:
+        context = {}
+    else:    
+        context = {
+            "user": models.User.objects.filter(id=request.session["user_id"])[0],
+        }
     return render(request, "index.html", context)
 
 def signin(request, errors=None):
-    context = {"errors": errors}
+    if request.session["user_id"] == None:
+        context = {
+            "user": "none",
+            "errors": errors,
+        }
+    else:
+        context = {
+            "user": models.User.objects.filter(id=request.session["user_id"])[0],
+            "errors": errors,
+        }
     return render(request, "sign_in.html", context)
 
 def process_login(request):
@@ -29,7 +43,16 @@ def process_login(request):
         return redirect("/dashboard")
 
 def register(request, errors=None):
-    context = {"errors": errors}
+    if request.session["user_id"] == None:
+        context = {
+            "user": "none",
+            "errors": errors,
+        }
+    else:
+        context = {
+            "user": models.User.objects.filter(id=request.session["user_id"])[0],
+            "errors": errors,
+        }
     return render(request, "register.html", context)
 
 def process_registration(request):
@@ -43,7 +66,6 @@ def process_registration(request):
     email = request.POST["email"]
     password = request.POST["password"]
     pw_confirm = request.POST["pw_confirm"]
-    print(request.POST)
 
     # use bcrypt to secure password
     pw_hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()

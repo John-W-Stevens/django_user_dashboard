@@ -27,7 +27,7 @@
         overflow: auto;
       }
       .message_content {
-        max-height: 200px;
+        max-height: 300px;
         overflow: auto;
         border: 1px solid grey;
         border-radius: 5px;
@@ -40,9 +40,14 @@
         border-radius: 5px;
         padding: 5px;
       }
+      .mc_header {
+        margin-top: 5px;
+        margin-bottom: 3px;
+      }
+
       .comment_textarea {
-        min-height: 50px;
-        max-height: 100px;
+        min-height: 20px;
+        max-height: 50px;
       }
       .comment_button {
         margin-top: 10px;
@@ -60,17 +65,23 @@
   <body>
 
     <!-- Navbar -->
-    <nav class="navbar navbar-expand navbar-light bg-light">
+    <nav class="navbar navbar-expand-md navbar-light bg-light">
       <a class="navbar-brand" href="/">User Dashboard</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <a class="navbar-nav mr-sm-0 nav-link" href="/dashboard">Dashboard</a>
-        <a class="navbar-nav mr-auto nav-link" href="/dashboard/profile">Profile</a>
       {% if request.session.user_id == None %}
+        <a class="navbar-nav mr-auto nav-link disabled" href="/dashboard">Dashboard</a>
         <a class="navbar-nav mr-sm-0 nav-link" href="/signin">Signin</a>
       {% else %}
+        <a class="navbar-nav mr-sm-0 nav-link" href="/dashboard">Dashboard</a>
+        <a class="navbar-nav mr-auto nav-link" href="/message_board/{{user.id}}">Wall</a>
+      {% if user.level == 9%}
+        <a class="navbar-nav mr-sm-0 nav-link" href="/dashboard/profile">{{user.first_name}} {{user.last_name}} (admin)</a>
+      {% else %}
+        <a class="navbar-nav mr-sm-0 nav-link" href="/dashboard/profile">{{user.first_name}} {{user.last_name}}</a>
+      {% endif %}
         <a class="navbar-nav mr-sm-0 nav-link" href="/logoff">Logoff</a>
       {% endif %}
       </div>
@@ -136,10 +147,10 @@
       <!-- Message header -->
       <div class="row">
         <div class="col-6">
-          <p>{{ message.author.first_name }} {{ message.author.last_name }} wrote:</p>
+          <p class="mc_header">{{ message.author.first_name }} {{ message.author.last_name }} wrote:</p>
         </div>
         <div class="col-6 text-right">
-          <p>{{message.created_at}}</p>
+          <p class="mc_header">{{message.created_at}}</p>
         </div>
       </div>
 
@@ -153,28 +164,28 @@
       {% for comment in message.comments.all %}
       <!-- comment header -->
       <div class="row">
-        <div class="col-5 offset-2">
-          <p>{{comment.author.first_name}} wrote</p>
+        <div class="col-5 offset-1">
+          <p class="mc_header">{{comment.author.first_name}} wrote</p>
         </div>
-        <div class="col-5 text-right">
-          <p>{{comment.created_at}}</p>
+        <div class="col-5 offset-1 text-right">
+          <p class="mc_header">{{comment.created_at}}</p>
         </div>
       </div>
       <!-- comment content -->
       <div class="row">
-        <div class="col-10 offset-2">
+        <div class="col-11 offset-1">
           <p class="comment_content">{{comment.content}}</p>
         </div>
       </div>
       {% endfor %}
       <!-- Leave a comment -->
       <div class="row">
-        <div class="col-10 offset-2">
+        <div class="col-11 offset-1">
           <p>Leave a comment:</p>
         </div>
       </div>
       <div class="row">
-        <div class="col-10 offset-2">
+        <div class="col-11 offset-1">
           <form action="/message_board/{{profile.id}}/{{message.id}}/comment" method="post">
             {% csrf_token %}
             <textarea class="form-control comment_textarea" name="comment"></textarea>

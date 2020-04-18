@@ -5,15 +5,18 @@ import bcrypt
 # Create your views here.
 def dashboard(request):
     context = {
-        "user": User.objects.filter(id=int(request.session["user_id"]))[0],
+        "user": User.objects.filter(id=request.session["user_id"])[0],
         "users": User.objects.all(),
     }
     return render(request, "dashboard.html", context)
 
 def add_user(request, errors=None):
-    user = User.objects.filter(id=int(request.session["user_id"]))[0]
+    user = User.objects.filter(id=request.session["user_id"])[0]
     if user.level == 9:
-        context = {"errors": errors}
+        context = {
+            "errors": errors,
+            "user": user,
+        }
         return render(request, "add_user.html", context)
     return redirect("/dashboard")
 
@@ -46,7 +49,7 @@ def process_new_user(request):
 
 def load_profile(request, errors=None):
     # current user
-    user = User.objects.filter(id=int(request.session["user_id"]))[0]
+    user = User.objects.filter(id=request.session["user_id"])[0]
 
     context = {
         "user": user,
@@ -57,7 +60,7 @@ def load_profile(request, errors=None):
     return render(request, "profile.html", context)
 
 def edit_user(request, id, errors=None):
-    user = User.objects.filter(id=int(request.session["user_id"]))[0]
+    user = User.objects.filter(id=request.session["user_id"])[0]
 
     if user.level != 9: # prevent access to this url for non-admins
         return redirect("/dashboard")
@@ -84,7 +87,7 @@ def process_profile_update(request, id):
     if len(request.POST) >= 4: 
         # return errors
         if len(errors) > 0:
-            if id == int(request.session["user_id"]):
+            if id == request.session["user_id"]:
                 return load_profile(request, errors=errors) # load_profile() returned if user is editing their own profile
             else:
                 return edit_user(request, id, errors=errors) # edit_user() returned if admin is editing another user's profile
@@ -102,7 +105,7 @@ def process_profile_update(request, id):
     elif len(request.POST) == 3:
         # return errors
         if len(errors) > 0:
-            if id == int(request.session["user_id"]):
+            if id == request.session["user_id"]:
                 return load_profile(request, errors=errors) # load_profile() returned if user is editing their own profile
             else:
                 return edit_user(request, id, errors=errors) # edit_user() returned if admin is editing another user's profile
@@ -119,14 +122,14 @@ def process_profile_update(request, id):
         user.save()
         return load_profile(request) # only user's can modify their own profiles so return load_profile()
 
-    if id == int(request.session["user_id"]):
+    if id == request.session["user_id"]:
         return load_profile(request) # load_profile() returned if user is editing their own profile
     else:
         return edit_user(request, id) # edit_user() returned if admin is editing another user's profile
 
 def process_profile_deletion(request, id):
     # restrict access to this url to none-administrators
-    if User.objects.filter(id=int(request.session["user_id"]))[0].level != 9:
+    if User.objects.filter(id=request.session["user_id"])[0].level != 9:
         return redirect("/dashboard")
     # delete user account
     user = User.objects.get(id=id)

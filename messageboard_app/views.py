@@ -6,7 +6,7 @@ from . import models
 def message_board(request, id):
 
     profile = User.objects.filter(id=id)[0]
-    user = User.objects.filter(id=int(request.session["user_id"]))[0]
+    user = User.objects.filter(id=request.session["user_id"])[0]
 
     context = {
         "user": user,
@@ -17,14 +17,14 @@ def message_board(request, id):
     return render(request, "message_board.html", context)
 
 def post_message(request, profile_id):
-    author = User.objects.filter(id=int(request.session["user_id"]))[0]
+    author = User.objects.filter(id=request.session["user_id"])[0]
     profile = User.objects.filter(id=profile_id)[0]
     message = models.Message.objects.create(content=request.POST["message"], author=author, recipient=profile)
     
     return redirect(f"/message_board/{profile_id}")
 
 def post_comment(request, profile_id, message_id):
-    author = User.objects.filter(id=int(request.session["user_id"]))[0]
+    author = User.objects.filter(id=request.session["user_id"])[0]
     profile = User.objects.filter(id=profile_id)[0]
     message = models.Message.objects.filter(id=message_id)[0]
     comment = models.Comment.objects.create(content=request.POST["comment"], author=author, message=message)
