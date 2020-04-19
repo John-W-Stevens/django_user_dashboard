@@ -85,7 +85,15 @@
           <a href="/dashboard" class="btn btn-primary btn-sm">Return to Dashboard</a>
         </div>
       </div>
-      
+
+      {% if profile.photo %}
+      <div class="row">
+        <div class="col-4 offset-3">
+          <img src="{{ profile.photo.url }}" alt="profile picture">
+        </div>
+      </div>
+      {% endif %}
+
       <div class="row">
         <div class="col-10 offset-1 col-md-8 offset-md-2">
           <form action="/dashboard/update_profile/{{profile.id}}" method="post">

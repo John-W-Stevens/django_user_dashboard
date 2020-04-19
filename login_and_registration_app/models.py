@@ -1,4 +1,8 @@
 from django.db import models
+# from django import forms
+from django.core.validators import FileExtensionValidator
+
+
 import re
 import datetime
 import bcrypt
@@ -89,7 +93,9 @@ class UserManager(models.Manager):
 
         return errors
 
-
+    def validate_file_upload(self, postData):
+        errors = {}
+        return errors
 
 
 class User(models.Model):
@@ -98,7 +104,9 @@ class User(models.Model):
     email = models.CharField(max_length=255)
     level = models.IntegerField(default=1)
     description = models.TextField(null=True)
-    password = models.CharField(max_length=45)
+    password = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)    
+    updated_at = models.DateTimeField(auto_now=True)
+    photo = models.ImageField(upload_to="profile_images", blank=True)
     objects = UserManager()
+

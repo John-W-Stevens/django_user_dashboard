@@ -14,9 +14,16 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.urls import path, include
+from django.contrib import admin
+
+# These two lines are necessary for the + static media snippet following urlpatterns 
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
+    path('admin/', admin.site.urls),
     path("", include("login_and_registration_app.urls")),
     path("dashboard", include("dashboard_app.urls")),
     path("message_board", include("messageboard_app.urls")),
-]
+
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
