@@ -107,6 +107,10 @@ class User(models.Model):
     password = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    photo = models.ImageField(upload_to="profile_images", blank=True)
+    profile_photo = models.ImageField(upload_to="profile_images", blank=True)
+    default_photo = models.ImageField(upload_to="profile_images", default="default.jpg")
+    city = models.CharField(max_length=45, null=True)
+    state = models.CharField(max_length=45, null=True)
+    country = models.CharField(max_length=45, null=True)
     objects = UserManager()
 

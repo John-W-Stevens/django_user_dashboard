@@ -15,6 +15,12 @@
     <!-- <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}"> -->
 
     <style>
+
+
+      img {
+        width: 150px;
+      }
+
       .top_row {
         margin-top: 15px;
       }
@@ -77,6 +83,11 @@
         color: red;
       }
 
+      .profile_picture {
+        background-size: contain;
+        background-repeat: no-repeat;
+      }
+
     </style>
 
     <title>Message board</title>
@@ -110,31 +121,38 @@
 
     <div class="container">
       <div class="row top_row">
-        <div class="col-12">
-          <h3>{{profile.first_name}} {{profile.last_name}}</h3>
+        
+        <!-- Profile photo -->
+        <div class="col-6 offset-3 col-md-3 offset-md-0 col-lg-2">
+          {% if profile.profile_photo %}
+          <img src="{{profile.profile_photo.url}}" alt="profile photo">
+          {% else %}
+          <img src="{{profile.default_photo.url}}" alt="profile photo">
+          {% endif %}
         </div>
-        <div class="col-12">
 
+        <div class="col-12 col-md-9 col-lg-10">
           <div class="row">
-            <div class="col-4 col-md-3 col-lg-2">Registered at:</div>
-            <div class="col-8 col-md-9 col-lg-10">{{profile.created_at}}</div>
+            <div class="col-12">
+              <h3>{{profile.first_name}} {{profile.last_name}}</h3>
+            </div>
           </div>
-
           <div class="row">
-            <div class="col-4 col-md-3 col-lg-2">User ID:</div>
-            <div class="col-8 col-md-9 col-lg-10">{{profile.id}}</div>
+            {% if profile.city and profile.state and profile.country %}
+            <div class="col-12">Location: {{profile.city}} {{profile.state}}, {{profile.country}}</div>
+            {% else %}
+            <div class="col-12">Member at large</div>
+            {% endif %}
           </div>
-
           <div class="row">
-            <div class="col-4 col-md-3 col-lg-2">Email Address:</div>
-            <div class="col-8 col-md-9 col-lg-10">{{profile.email}}</div>
+            <div class="col-12">Member since: {{profile.created_at|date:"M d, Y"}}</div>
           </div>
-
           <div class="row">
-            <div class="col-4 col-md-3 col-lg-2">Description:</div>
-            <div class="col-8 col-md-9 col-lg-10">{{profile.description}}</div>
+            <div class="col-12">Posts made: {{profile.messages_posted|length}}</div>
           </div>
-
+          <div class="row">
+            <div class="col-12">Description: {{profile.description}}</div>
+          </div>
         </div>
       </div>
     
@@ -173,7 +191,11 @@
       <!-- Message header -->
       <div class="row">
         <div class="col-6">
+          {% if message.author == profile %}
+          <p class="mc_header">{{message.author.first_name}} {{message.author.last_name}} wrote:</p>
+          {% else %}
           <p class="mc_header"><a href="/message_board/{{message.author.id}}">{{ message.author.first_name }} {{ message.author.last_name }} </a>wrote:</p>
+          {% endif %}
         </div>
         <div class="col-6 text-right">
           {% if message.edited %}

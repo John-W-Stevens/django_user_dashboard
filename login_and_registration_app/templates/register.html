@@ -86,14 +86,14 @@
                 {% else %}
                 <small>Must be 8 characters long</small>
                 {% endif %}
-                <input type="text" class="form-control" name="password">
+                <input type="password" class="form-control" name="password">
               </div>
               <div class="form-group">
                 <label>Confirm Password:</label>
                 {% if errors.pw_confirm %}
                 &nbsp<small class="error_message">{{ errors.pw_confirm }}</small>
                 {% endif %}
-                <input type="text" class="form-control" name="pw_confirm">
+                <input type="password" class="form-control" name="pw_confirm">
               </div>
               {% if user == "none" %}
               <div class="form-group text-right">

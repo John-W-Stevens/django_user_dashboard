@@ -2,6 +2,21 @@ from django.shortcuts import render, redirect
 from login_and_registration_app.models import User
 import bcrypt
 
+def display_post(request):
+    print("..........................")
+    print("Printing data from request.POST.......")
+    for k,v in request.POST.items():
+        print(f"Key: {k}, Value: {v}")
+    print("..........................")
+    print("Printing data from request.FILES.......")
+    if request.FILES == {}:
+        print("No files uploaded")
+    else:
+        for k,v in request.FILES.items():
+            print(f"Key: {k}, Value: {v}")
+    print("..........................")
+
+
 def logged_user(request):
     return User.objects.filter(id=request.session["user_id"])[0]
 
@@ -33,6 +48,7 @@ def load_add_user_page(request):
     return render(request, "add_user.html", context)
     
 def process_new_user(request):
+    # print(request.POST)
 
     errors = User.objects.registration_validations(request.POST)
     if len(errors) > 0:
@@ -70,6 +86,10 @@ def process_profile_deletion(request, id):
     return redirect("/dashboard")
     
 def process_profile_update(request, profile_id):
+    display_post(request)
+    # print("........")
+    # print(request.FILES)
+
     user = logged_user(request)
     profile = User.objects.filter(id=profile_id)[0]
 
@@ -91,20 +111,32 @@ def process_profile_update(request, profile_id):
         profile.password = bcrypt.hashpw(request.POST["password"].encode(), bcrypt.gensalt()).decode()
 
     if user != profile:
-    # if user.level == 9:
         if request.POST["user_level"] == "Admin":
             profile.level = 9
         else:
             profile.level = 1
 
+    if request.POST["city"] != "":
+        profile.city = request.POST["city"]
+    if request.POST["state"] != "":
+        profile.state = request.POST["state"]
+    if request.POST["country"] != "":
+        profile.country = request.POST["country"]
+
+    if request.FILES != {}:
+        # delete the old profile image
+        profile.profile_photo.delete()
+        # change the user's profile image
+        profile.profile_photo = request.FILES["profile_image_upload"]
+
     profile.description = request.POST["description"]
     profile.save()
+
+
 
     return redirect(f"/dashboard/edit_profile/{profile_id}")
 
 def load_edit_profile_page(request, profile_id):
-
-    print(request.POST)
 
     """ Loads edit_profile page """
     user = logged_user(request)
