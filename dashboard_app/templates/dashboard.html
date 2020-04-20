@@ -27,6 +27,9 @@
       table {
         font-size: 14px;
       }
+      .add_user_btn {
+        color: white !important;
+      }
 
     </style>
 
@@ -70,11 +73,39 @@
         </div>
         {% if user.level == 9 %}
         <div class="col-4 text-right">
-          <form action="/dashboard/add_user" method="post">
+          
+          <!-- <form action="/dashboard/add_user" method="post">
             {% csrf_token %}
             <input type="hidden" name="add_user">
             <button class="btn btn-primary btn-sm">Add User</button>
-          </form>
+          </form> -->
+
+          <!-- Verify credentials -->
+          <a class="btn btn-sm btn-primary add_user_btn" data-toggle="modal" data-target="#process_credentials">Add User</a>
+          <!-- Modal -->
+          <div class="modal fade bd-example-modal-sm" id="process_credentials" tabindex="-1" role="dialog" aria-labelledby="process_credentialsModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-sm" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h6 class="modal-title" id="process_credentialsModalLabel">Enter your password:</h6>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <form action="/dashboard/process_credentials" method="post">
+                    {% csrf_token %}
+                    <input type="hidden", name="add_user">
+                    <input type="password" name="password" class="form-control">
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Back</button>
+                  <button class="btn btn-primary btn-sm" type="submit">Submit</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
         {% endif %}
       </div>
@@ -111,11 +142,41 @@
                 {% endif %}
                 {% if user.level == 9%}
                   <td>
-                    <a href="/dashboard/edit_profile/{{profile.id}}">edit</a> |
-                    <a href="" data-toggle="modal" data-target="#remove{{profile.id}}">remove</a>
+                    <!-- edit profile original -->
+                    <!-- <a href="/dashboard/edit_profile/{{profile.id}}">edit</a> | -->
+                    
+                    <!-- edit profile -->
+                    <a href="" class="" data-toggle="modal" data-target="#process_credentials_edit_user_{{profile.id}}">Edit</a> |
+                    <!-- Modal -->
+                    <div class="modal fade bd-example-modal-sm" id="process_credentials_edit_user_{{profile.id}}" tabindex="-1" role="dialog" aria-labelledby="process_credentialsEditModalLabel" aria-hidden="true">
+                      <div class="modal-dialog modal-sm" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h6 class="modal-title" id="process_credentialsEditModalLabel">Enter your password:</h6>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <form action="/dashboard/process_credentials" method="post">
+                              {% csrf_token %}
+                              <input type="hidden" name="edit_user">
+                              <input type="hidden" name="profile_id" value="{{profile.id}}"> 
+                              <input type="password" name="password" class="form-control">
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Back</button>
+                            <button class="btn btn-primary btn-sm" type="submit">Submit</button>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  
+                    <a href="" data-toggle="modal" data-target="#remove{{profile.id}}">Remove</a>
 
                       <!-- Modal -->
-                      <div class="modal fade" id="remove{{profile.id}}" tabindex="-1" role="dialog" aria-labelledby="removeModalLabel" aria-hidden="true">
+                      <!-- <div class="modal fade" id="remove{{profile.id}}" tabindex="-1" role="dialog" aria-labelledby="removeModalLabel" aria-hidden="true">
                         <div class="modal-dialog" role="document">
                           <div class="modal-content">
                             <div class="modal-header">
@@ -133,8 +194,34 @@
                             </div>
                           </div>
                         </div>
-                      </div>
+                      </div> -->
                       
+                      <div class="modal fade" id="remove{{profile.id}}" tabindex="-1" role="dialog" aria-labelledby="removeModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="removeModalLabel">Remove {{profile.first_name}} {{profile.last_name}}?</h5>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                            </div>
+                            <div class="modal-body">
+                              <p>Deleting this account will remove all it's associated posts, messages, and comments. Are you sure?</p>
+                              <form action="/dashboard/delete_profile/{{profile.id}}" method="post">
+                                {% csrf_token %}
+                                <label>Enter your password:</label>
+                                <input type="password" class="form-control" name="password">
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Back</button>
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                              </form>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+
                   </td>
                 {% endif %}
                 </tr>

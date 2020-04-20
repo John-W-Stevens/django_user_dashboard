@@ -8,11 +8,16 @@ def logged_user(request):
 def initialize_session(request):
     try:
         request.session["user_id"]
+        # handles the rare case where an administrator deletes their own account
+        if not models.User.objects.filter(id=request.session["user_id"]):
+            request.session["user_id"] = None
     except KeyError:
         request.session["user_id"] = None
 
+
 def index(request):
     initialize_session(request)
+
     if request.session["user_id"] == None:
         context = {}
     else:    

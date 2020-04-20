@@ -21,6 +21,13 @@ def logged_user(request):
     return User.objects.filter(id=request.session["user_id"])[0]
 
 def dashboard(request):
+
+    # Handles an administrator deleting their own account
+    try:
+        User.objects.filter(id=request.session["user_id"])[0]
+    except IndexError:
+        return redirect("/")
+
     context = {
         "user": logged_user(request),
         "users": User.objects.all(),
@@ -46,7 +53,26 @@ def load_add_user_page(request):
     request.session["errors"] = None
 
     return render(request, "add_user.html", context)
+
+def process_credentials(request):
+    # restrict access to anyone who isn't an admin
+    display_post(request)
+    if logged_user(request).level != 9:
+        return redirect("/dashboard")
+    if "add_user" in request.POST and User.objects.confirm_credentials(request.session, request.POST):
+        return redirect("/dashboard/add_user")
+
+    if "edit_user" in request.POST and User.objects.confirm_credentials(request.session, request.POST):
+        profile_id = request.POST["profile_id"]
+        return redirect(f"/dashboard/edit_profile/{profile_id}")
     
+    if "delete_user" in request.POST:
+        print("Wow")
+
+    else:
+        return redirect("/dashboard")
+
+
 def process_new_user(request):
     # print(request.POST)
 
@@ -80,16 +106,15 @@ def process_profile_deletion(request, id):
     # restrict access to this url for none-administrators
     if logged_user(request).level != 9:
         return redirect("/dashboard")
-    user = User.objects.get(id=id)
-    user.delete()
+
+    if User.objects.confirm_credentials(request.session, request.POST):
+        user = User.objects.get(id=id)
+        user.delete()
 
     return redirect("/dashboard")
     
 def process_profile_update(request, profile_id):
-    display_post(request)
-    # print("........")
-    # print(request.FILES)
-
+    # display_post(request)
     user = logged_user(request)
     profile = User.objects.filter(id=profile_id)[0]
 

@@ -49,7 +49,14 @@ class UserManager(models.Manager):
             if not bcrypt.checkpw(pw.encode(), users[0].password.encode()):
                 errors["password"] = "Invalid password"
         return errors
-        
+
+    def confirm_credentials(self, sessionData, postData):
+        user = User.objects.filter(id=sessionData["user_id"])[0]
+        pw = postData["password"]
+        if bcrypt.checkpw(pw.encode(), user.password.encode()):
+            return True
+        return False
+
     def update_profile_validations(self, postData, profile_id):
         profile = User.objects.filter(id=profile_id)[0]
         errors = {}
