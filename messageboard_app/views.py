@@ -43,22 +43,18 @@ def post_message(request, profile_id):
 
 
 def post_comment(request, profile_id, message_id):
+    #modified with ajax
     author = logged_user(request)
     profile = User.objects.filter(id=profile_id)[0]
     message = models.Message.objects.filter(id=message_id)[0]
 
-    # handle errors
-    errors = models.Comment.objects.comment_validations(request.POST)    
-    if len(errors) > 0:
-        request.session["errors"] = errors
-        return redirect(f"/message_board/{profile_id}")
-        # return message_board(request, profile.id, errors=errors)
-
-    comment = models.Comment.objects.create(content=request.POST["comment"], author=author, message=message)    
-    return redirect(f"/message_board/{profile_id}")
-
-
-
+    comment = models.Comment.objects.create(content=request.POST["comment"], author=author, message=message) 
+    comment.save()   
+    context = {
+        "user": logged_user(request),
+        "message": message
+    }
+    return render(request, "comments.html", context)
 
 
 

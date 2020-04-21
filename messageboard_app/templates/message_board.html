@@ -286,8 +286,9 @@
         {% endif %}
       </div>
 
-      {% for comment in message.comments.all %}
-      <!-- comment header -->
+    <div id="{{message.id}}_comments_container">
+        {% for comment in message.comments.all %}
+        <!-- comment header -->
       <div class="row">
         <div class="col-5 offset-1">
           <p class="mc_header"><a href="/message_board/{{comment.author.id}}">{{comment.author.first_name}} </a>wrote</p>
@@ -381,22 +382,19 @@
         {% endif %}
       </div>
       {% endfor %}
-
+    </div>
       <!-- Leave a comment -->
       <div class="row">
-        <div class="col-11 offset-1">
-          {% if errors.comment %}
-          <p>Leave a comment: &nbsp&nbsp<small class="comment_error">{{ errors.comment }}</small></p>
-          {% else %}
-          <p>Leave a comment:</p>
-          {% endif %}
+        <div class="col-11 offset-1" id="comment_label_container_{{message.id}}">
+          <p id="comment_label_{{message.id}}">Leave a comment:</p>
         </div>
       </div>
       <div class="row">
         <div class="col-11 offset-1">
-          <form action="/message_board/{{profile.id}}/{{message.id}}/comment" method="post">
+          <form action="/message_board/{{profile.id}}/{{message.id}}/comment" class="comment" id="{{message.id}}" method="post">
             {% csrf_token %}
-            <textarea class="form-control comment_textarea" name="comment"></textarea>
+            <input type="hidden" id="{{message.id}}_profile_id" value="{{profile.id}}">
+            <textarea class="form-control comment_textarea" name="comment" id="textarea_{{message.id}}"></textarea>
             <div class="form-group text-right">
               <button class="btn btn-success btn-sm comment_button">Post</button>
             </div>
@@ -409,7 +407,9 @@
     </div>
 
     <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="{% static 'jquery-3.5.0.js' %}"></script>
+    
+    <!-- <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script> -->
 
     <!-- Popper.js -->
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
@@ -419,6 +419,32 @@
 
     <!-- Custom JavaScript -->
     <!-- <script type="text/javascript" src="script.js"></script> -->
+
+    <script>
+
+      $(".comment").on("submit", function(e){
+        e.preventDefault()
+        messageID = $(this).attr("id") // this is message.id
+        profileID = $(`#${messageID}_profile_id`).val() // this is profile.id
+        textarea_value = $(`#textarea_${messageID}`).val() // this is the form input field
+        if (textarea_value == ""){
+          // this handles input validation (prevents submission of an empty form)
+          $(`#comment_label_container_${messageID}`).html('          <p>Leave a comment: &nbsp&nbsp<small class="comment_error">Cannot submit empty comment</small></p>')
+        }
+        else {
+          // if the form isn't empty, make the ajax request
+            $.ajax({
+            url: `/message_board/${profileID}/${messageID}/comment`, // the url path for posting a comment
+            method: 'post',
+            data: $(this).serialize(),
+            success: function(serverResponse){
+              $(`#${messageID}_comments_container`).html(serverResponse) // replace the contents of the comments div with the serverResponse
+            }
+          })
+        }
+        
+      })
+    </script>
 
   </body>
 </html>
